@@ -36,14 +36,14 @@ for i in sb_set.find():
     #3.get data , if fail try again
     tmp_set = db[code]
     df=None
-    wait_time = 30
+    wait_time = 300
     while True:
         try:
-            wait_time*=2
             df = ts.get_h_data(code,start= start_date,end= '2018-07-06')
         except IOError:
             print("get fail ,wait....",wait_time,"sec")
             time.sleep(wait_time)
+            continue
         else:
             break
     #4.insert mongodb

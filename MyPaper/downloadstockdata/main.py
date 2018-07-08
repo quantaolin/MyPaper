@@ -14,9 +14,11 @@ sb_set = db.sb_set
 sb = ts.get_stock_basics()
 
 #get stock code list
-# for indx,item in sb.iterrows():
-#     date = sb.ix[indx]['timeToMarket']
-#     sb_set.insert({"code":indx,"industry":item['industry'],"area":item['area'],"pe":item['pe'],"outstanding":item['outstanding'],"timeToMarket":int(date)})
+for indx,item in sb.iterrows():
+    date = int(sb.ix[indx]['timeToMarket'])
+    if date > 20180401:
+        continue
+    sb_set.insert({"code":indx,"industry":item['industry'],"area":item['area'],"pe":item['pe'],"outstanding":item['outstanding'],"timeToMarket":date})
 
 #get stock data
 for i in sb_set.find():

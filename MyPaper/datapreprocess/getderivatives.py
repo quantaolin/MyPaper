@@ -25,5 +25,5 @@ for i in sb_set.find():
             lastprice = j['close']
             continue
         derivative = (j['close'] - lastprice)/lastprice
-        tmp_set.insert({"data":j['data'],"derivative":derivative})
+        tmp_set.update_one({"data":j['data']},{"$set":{"derivative":derivative}})
         lastprice = j['close']  

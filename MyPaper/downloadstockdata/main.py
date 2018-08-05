@@ -14,11 +14,11 @@ sb_set = db.sb_set
 sb = ts.get_stock_basics()
 
 #get stock code list
-for indx,item in sb.iterrows():
-    date = int(sb.ix[indx]['timeToMarket'])
-    if date > 20180401:
-        continue
-    sb_set.insert({"code":indx,"industry":item['industry'],"area":item['area'],"pe":item['pe'],"outstanding":item['outstanding'],"timeToMarket":date})
+# for indx,item in sb.iterrows():
+#     date = int(sb.ix[indx]['timeToMarket'])
+#     if date > 20180401:
+#         continue
+#     sb_set.insert({"code":indx,"industry":item['industry'],"area":item['area'],"pe":item['pe'],"outstanding":item['outstanding'],"timeToMarket":date})
 
 #get stock data
 for i in sb_set.find():
@@ -42,7 +42,7 @@ for i in sb_set.find():
     while True:
         try:
             df = ts.get_h_data(code,start= start_date,end= '2018-07-06')
-        except IOError:
+        except:
             print("get fail ,wait....",wait_time,"sec")
             time.sleep(wait_time)
             continue

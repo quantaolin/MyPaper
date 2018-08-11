@@ -41,7 +41,7 @@ def getrisegroup(pricelist,key_point_indexs,key_point_riseandfall_flags):
                     end_index = end_index-1
                     break
                 end_index = end_index+1
-            if end_index - start_index < horizontal_before_rise_min_len:
+            if end_index - start_index + 1 < horizontal_before_rise_min_len:
                 unrise_index_group.append([index,nextindex])
             else:
                 rise_index_group.append([start_index,end_index])
@@ -81,7 +81,7 @@ def getfallgroup(pricelist,key_point_indexs,key_point_riseandfall_flags):
                     end_index = end_index-1
                     break
                 end_index = end_index+1
-            if end_index - start_index < horizontal_before_fall_max_len:
+            if end_index - start_index + 1 < horizontal_before_fall_max_len:
                 unfall_index_group.append([index,nextindex])
             else:
                 fall_index_group.append([start_index,end_index])

@@ -94,7 +94,7 @@ def getfallgroup(pricelist,key_point_indexs,key_point_riseandfall_flags):
 
 conn = MongoClient('127.0.0.1', 27017)
 db = conn.mydb
-sb_set = db.sb_set
+sb_set = db.train_sb_set
 seq_set = db.seq_set
 rise_set = db.rise_set
 unrise_set = db.unrise_set

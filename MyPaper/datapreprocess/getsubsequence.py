@@ -58,7 +58,7 @@ def getSubSeque(pricelist):
 
 conn = MongoClient('127.0.0.1', 27017)
 db = conn.mydb
-sb_set = db.sb_set
+sb_set = db.train_sb_set
 seq_set = db.seq_set
 
 for i in sb_set.find():

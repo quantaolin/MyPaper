@@ -68,7 +68,7 @@ for i in sb_set.find():
     if code not in collist:
         print("code:",code," is not have continue")
         continue
-    
+    print("get stock:",code," price subsequence")
     tmp_set = db[code]
     pricelist = [] 
     for j in tmp_set.find().sort("data"):

@@ -61,7 +61,13 @@ db = conn.mydb
 sb_set = db.train_sb_set
 seq_set = db.seq_set
 
+flag = 0
+
 for i in sb_set.find():
+    
+    if flag>0:break
+    flag += 1
+    
     code = i['code']
     
     collist = db.collection_names()

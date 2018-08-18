@@ -35,6 +35,7 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict):
         for indexgroup in value:
             mainpriceseq = pricederivatList[indexgroup[0],indexgroup[1]+1]
             dist, cost, path = mlpy.dtw_subsequence(queryseq, mainpriceseq, dist_only=False)
+            print("true dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
             if dist <= DTW_DISTANCE_THRESHOLD:
                 true_to_true_count += 1
             else:
@@ -44,6 +45,7 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict):
         for indexgroup in value:
             mainpriceseq = pricederivatList[indexgroup[0],indexgroup[1]+1]
             dist, cost, path = mlpy.dtw_subsequence(queryseq, mainpriceseq, dist_only=False)
+            print("true dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
             if dist <= DTW_DISTANCE_THRESHOLD:
                 false_to_true_count += 1
             else:
@@ -115,7 +117,7 @@ for key,value in riseDict.items():
             if len > (endindex-startindex+1):
                 break
             for offset in range(endindex-startindex+1-len+1):
-                print("get stock:",key,"begin,startindex:",startindex+offset,",endindex:",startindex+offset+len-1)
+                print("get stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",len,",offset:",offset)
                 queryseq=pricederivatList[startindex+offset,startindex+offset+len]
                 print("queryseq:",queryseq)
                 seqentropy=getseqentropy(queryseq,riseDict,unriseDict,pricederivatDict)
@@ -136,7 +138,7 @@ for key,value in fallDict.items():
             if len > (endindex-startindex+1):
                 break
             for offset in range(endindex-startindex+1-len+1):
-                print("get stock:",key,"begin,startindex:",startindex+offset,",endindex:",startindex+offset+len-1)
+                print("get stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",len,",offset:",offset)
                 queryseq=pricederivatList[startindex+offset,startindex+offset+len]
                 print("queryseq:",queryseq)
                 seqentropy=getseqentropy(queryseq,fallDict,unfallDict,pricederivatDict)

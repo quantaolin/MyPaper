@@ -5,7 +5,7 @@ Created on 2018-07-07 09:17
 '''
 from pymongo import MongoClient
 import math
-import mlpy
+import subsequencedtw
 
 GAIN_THRESHOLD=0.5
 DTW_DISTANCE_THRESHOLD=10
@@ -34,7 +34,7 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict):
         pricederivatList = pricederivatDict[key]
         for indexgroup in value:
             mainpriceseq = pricederivatList[indexgroup[0],indexgroup[1]+1]
-            dist, cost, path = mlpy.dtw_subsequence(queryseq, mainpriceseq)
+            dist, path = subsequencedtw.deal(queryseq, mainpriceseq)
             print("true dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
             if dist <= DTW_DISTANCE_THRESHOLD:
                 true_to_true_count += 1
@@ -44,7 +44,7 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict):
         pricederivatList = pricederivatDict[key]
         for indexgroup in value:
             mainpriceseq = pricederivatList[indexgroup[0],indexgroup[1]+1]
-            dist, cost, path = mlpy.dtw_subsequence(queryseq, mainpriceseq)
+            dist, cost, path = subsequencedtw.deal(queryseq, mainpriceseq)
             print("true dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
             if dist <= DTW_DISTANCE_THRESHOLD:
                 false_to_true_count += 1

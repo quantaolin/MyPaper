@@ -1,0 +1,3 @@
+TS=(stock AND market AND forecast) AND SU = computer science
+TS=(stock AND market AND forecast AND Bayesian) AND SU = computer science
+TS=(stock AND market AND forecast AND fuzzy ) AND SU = computer science

@@ -5,7 +5,7 @@ Created on 2018-07-07 09:17
 '''
 from pymongo import MongoClient
 import math
-import mlpy
+import subsequencedtw
 
 GAIN_THRESHOLD=0.5
 DTW_DISTANCE_THRESHOLD=10
@@ -34,7 +34,8 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict):
         pricederivatList = pricederivatDict[key]
         for indexgroup in value:
             mainpriceseq = pricederivatList[indexgroup[0],indexgroup[1]+1]
-            dist, cost, path = mlpy.dtw_subsequence(queryseq, mainpriceseq, dist_only=False)
+            dist, path = subsequencedtw.deal(queryseq, mainpriceseq)
+            print("true dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
             if dist <= DTW_DISTANCE_THRESHOLD:
                 true_to_true_count += 1
             else:
@@ -43,7 +44,8 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict):
         pricederivatList = pricederivatDict[key]
         for indexgroup in value:
             mainpriceseq = pricederivatList[indexgroup[0],indexgroup[1]+1]
-            dist, cost, path = mlpy.dtw_subsequence(queryseq, mainpriceseq, dist_only=False)
+            dist, cost, path = subsequencedtw.deal(queryseq, mainpriceseq)
+            print("true dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
             if dist <= DTW_DISTANCE_THRESHOLD:
                 false_to_true_count += 1
             else:
@@ -75,16 +77,23 @@ fallDict={}
 unfallDict={}
 pricederivatDict={}
 riseGroupEntropy=getentropybyset(rise_set,unrise_set)
+print("get rise entropy:",riseGroupEntropy)
 fallGroupEntropy=getentropybyset(fall_set,unfall_set)
+print("get fall entropy:",fallGroupEntropy)
 
+print("get rise dict")
 for i in rise_set.find():
     riseDict[i['code']]=i['index_group']
+print("get unrise dict")
 for i in unrise_set.find():
     unriseDict[i['code']]=i['index_group']
+print("get fall dict")
 for i in fall_set.find():
     fallDict[i['code']]=i['index_group']
+print("get unfall dict")
 for i in unfall_set.find():
     unfallDict[i['code']]=i['index_group']
+print("get price list")
 for i in sb_set.find():
     code = i['code']
     collist = db.collection_names()
@@ -96,9 +105,11 @@ for i in sb_set.find():
     for j in tmp_set.find().sort("data"):
         pricelist.append(j['derivative'])       
     pricederivatDict[code]=pricelist
-    
+
+print("del rise")  
 for key,value in riseDict.items():
     pricederivatList = pricederivatDict[key]
+    print("del stock:",key)
     for indexgroup in value:
         startindex=indexgroup[0]
         endindex=indexgroup[1]
@@ -106,14 +117,20 @@ for key,value in riseDict.items():
             if len > (endindex-startindex+1):
                 break
             for offset in range(endindex-startindex+1-len+1):
+                print("get stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",len,",offset:",offset)
                 queryseq=pricederivatList[startindex+offset,startindex+offset+len]
+                print("queryseq:",queryseq)
                 seqentropy=getseqentropy(queryseq,riseDict,unriseDict,pricederivatDict)
                 gain=riseGroupEntropy-seqentropy
+                print("seqentropy:",seqentropy,"gain:",gain)
                 if gain >= GAIN_THRESHOLD:
+                    print("get stock:",key,"begin,startindex:",startindex+offset,",endindex:",startindex+offset+len-1)
                     rise_feature_set.insert({"code":key,"startindex":startindex+offset,"endindex":startindex+offset+len-1})
                     
+print("del fall")                     
 for key,value in fallDict.items():
     pricederivatList = pricederivatDict[key]
+    print("del stock:",key)
     for indexgroup in value:
         startindex=indexgroup[0]
         endindex=indexgroup[1]
@@ -121,8 +138,12 @@ for key,value in fallDict.items():
             if len > (endindex-startindex+1):
                 break
             for offset in range(endindex-startindex+1-len+1):
+                print("get stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",len,",offset:",offset)
                 queryseq=pricederivatList[startindex+offset,startindex+offset+len]
+                print("queryseq:",queryseq)
                 seqentropy=getseqentropy(queryseq,fallDict,unfallDict,pricederivatDict)
                 gain=fallGroupEntropy-seqentropy
+                print("seqentropy:",seqentropy,"gain:",gain)
                 if gain >= GAIN_THRESHOLD:
+                    print("get stock:",key,"success,startindex:",startindex+offset,",endindex:",startindex+offset+len-1)
                     fall_feature_set.insert({"code":key,"startindex":startindex+offset,"endindex":startindex+offset+len-1})

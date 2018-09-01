@@ -62,13 +62,14 @@ sb_set = db.train_sb_set
 seq_set = db.seq_set
 
 for i in sb_set.find():
+    
     code = i['code']
     
     collist = db.collection_names()
     if code not in collist:
         print("code:",code," is not have continue")
         continue
-    
+    print("get stock:",code," price subsequence")
     tmp_set = db[code]
     pricelist = [] 
     for j in tmp_set.find().sort("data"):

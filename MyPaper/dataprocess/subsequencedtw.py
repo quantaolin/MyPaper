@@ -14,7 +14,7 @@ def getCostMatrix(querySeq,majorSeq):
         queryIndex = querySeq[p]
         for q in range(len(majorSeq)):
             majorIndex = majorSeq[q]
-            distance = abs(queryIndex - majorIndex)
+            distance = round(abs(queryIndex - majorIndex)*1000,2)
             row.append(distance)
         costMatrix.append(row)
     return costMatrix

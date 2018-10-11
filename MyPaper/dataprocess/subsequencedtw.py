@@ -19,5 +19,5 @@ def getCostMatrix(querySeq,majorSeq):
         costMatrix.append(row)
     return costMatrix
 
-def getDtw(costMatrix,b):
+def getDtw(costMatrix,xIndex,yIndex):
     pass

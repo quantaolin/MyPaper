@@ -18,7 +18,7 @@ def deal(querySeq,majorSeq):
     return dist,path
 
 def getCostMatrix(querySeq,majorSeq):
-    costMatrix = [[0]*len(majorSeq) for i in range(len(querySeq))]
+    costMatrix = []
     for p in range(len(querySeq)):
         row=[]
         queryIndex = querySeq[p]

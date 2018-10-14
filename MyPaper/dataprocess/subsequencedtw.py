@@ -10,11 +10,15 @@ def deal(querySeq,majorSeq):
     dist = float('inf')
     path = []
     costMatrix = getCostMatrix(querySeq,majorSeq)
+    print("costMatrix:",costMatrix)
     for i in range(maxY + 1):
         tmpDist,tmpPath = getDtw(costMatrix,xIndex,maxY-i)
+        print("xIndex:",xIndex,",yIndex:",maxY-i,",dist:",tmpDist)
         if tmpDist < dist:
+            print("this is the nearest")
             dist = tmpDist
             path = tmpPath
+    print("the nearest dist is:",dist)
     return dist,path
 
 def getCostMatrix(querySeq,majorSeq):

@@ -4,7 +4,6 @@ Created on 2018-08-11 23:41
 @author: quantaolin
 '''
 from pymongo import MongoClient
-import math
 from dataprocess import subsequencedtw
 
 DTW_DISTANCE_THRESHOLD=10
@@ -18,6 +17,7 @@ def getResult(featurePriceSeq,testPriceSeq,riseAndFallFlag,code):
     for i in range(maxY + 1):
         tmpDist,tmpPath = subsequencedtw.getDtw(costMatrix,xIndex,maxY-i)
         if tmpDist < DTW_DISTANCE_THRESHOLD:
+            print("for code:",code,"this is feature index:",maxY-i,",flag:",riseAndFallFlag)
             test_result_set.insert({"code":code,"riseAndFallFlag":riseAndFallFlag,"index":maxY-i})
 
 conn = MongoClient('127.0.0.1', 27017)
@@ -63,8 +63,10 @@ for i in sb_set.find():
         continue
     testPriceSeq = pricederivatDict[code]
     for key,value in riseFeatureDict.items():
+        print("begin matching feature,code:",code,",featurecode:",key,",riseandfallflag:",1,",index:",value)
         featurePriceSeq = pricederivatDict[key][value[0],value[1]]
         getResult(featurePriceSeq,testPriceSeq,1,code)
     for key,value in fallFeatureDict.items():
+        print("begin matching feature,code:",code,",featurecode:",key,",riseandfallflag:",-1,",index:",value)
         featurePriceSeq = pricederivatDict[key][value[0],value[1]]
         getResult(featurePriceSeq,testPriceSeq,-1,code)

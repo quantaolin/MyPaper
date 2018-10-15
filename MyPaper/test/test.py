@@ -64,9 +64,9 @@ for i in sb_set.find():
     testPriceSeq = pricederivatDict[code]
     for key,value in riseFeatureDict.items():
         print("begin matching feature,code:",code,",featurecode:",key,",riseandfallflag:",1,",index:",value)
-        featurePriceSeq = pricederivatDict[key][value[0],value[1]]
+        featurePriceSeq = pricederivatDict[key][value[0]:value[1]]
         getResult(featurePriceSeq,testPriceSeq,1,code)
     for key,value in fallFeatureDict.items():
         print("begin matching feature,code:",code,",featurecode:",key,",riseandfallflag:",-1,",index:",value)
-        featurePriceSeq = pricederivatDict[key][value[0],value[1]]
+        featurePriceSeq = pricederivatDict[key][value[0]:value[1]]
         getResult(featurePriceSeq,testPriceSeq,-1,code)

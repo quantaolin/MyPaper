@@ -103,7 +103,6 @@ for i in sb_set.find():
     tmp_set = db[code]
     pricelist = [] 
     for j in tmp_set.find().sort("data"):
-        print(code,j)
         pricelist.append(j['derivative'])       
     pricederivatDict[code]=pricelist
 
@@ -119,7 +118,7 @@ for key,value in riseDict.items():
                 break
             for offset in range(endindex-startindex+1-len+1):
                 print("get stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",len,",offset:",offset)
-                queryseq=pricederivatList[startindex+offset,startindex+offset+len]
+                queryseq=pricederivatList[startindex+offset:startindex+offset+len]
                 print("queryseq:",queryseq)
                 seqentropy=getseqentropy(queryseq,riseDict,unriseDict,pricederivatDict)
                 gain=riseGroupEntropy-seqentropy
@@ -140,7 +139,7 @@ for key,value in fallDict.items():
                 break
             for offset in range(endindex-startindex+1-len+1):
                 print("get stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",len,",offset:",offset)
-                queryseq=pricederivatList[startindex+offset,startindex+offset+len]
+                queryseq=pricederivatList[startindex+offset:startindex+offset+len]
                 print("queryseq:",queryseq)
                 seqentropy=getseqentropy(queryseq,fallDict,unfallDict,pricederivatDict)
                 gain=fallGroupEntropy-seqentropy

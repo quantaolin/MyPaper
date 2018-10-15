@@ -9,7 +9,7 @@ import subsequencedtw
 
 GAIN_THRESHOLD=0.5
 DTW_DISTANCE_THRESHOLD=10
-SEQ_MIN_LEN=5
+SEQ_MIN_LEN=10
 SEQ_MAX_LEN=20
 
 def getentropybyset(aset,bset):

@@ -38,7 +38,9 @@ def getDtw(costMatrix,xIndex,yIndex):
         return costMatrix[xIndex][yIndex],[[xIndex,yIndex]]
     elif yIndex == 0:
         nextDistance,nextPath = getDtw(costMatrix,xIndex-1,yIndex)
-        return costMatrix[xIndex][yIndex]+nextDistance,[[xIndex,yIndex]].extend(nextPath)
+        path=[[xIndex,yIndex]]
+        path.extend(nextPath)
+        return costMatrix[xIndex][yIndex]+nextDistance,path
     else :
         nextDistance,nextPath = getDtw(costMatrix,xIndex-1,yIndex)
         nextDistance2,nextPath2 = getDtw(costMatrix,xIndex-1,yIndex-1)
@@ -49,4 +51,6 @@ def getDtw(costMatrix,xIndex,yIndex):
         if nextDistance3 < nextDistance:
             nextDistance = nextDistance3
             nextPath = nextPath3
-        return costMatrix[xIndex][yIndex]+nextDistance,[[xIndex,yIndex]].extend(nextPath)
+        path=[[xIndex,yIndex]]
+        path.extend(nextPath)
+        return costMatrix[xIndex][yIndex]+nextDistance,path

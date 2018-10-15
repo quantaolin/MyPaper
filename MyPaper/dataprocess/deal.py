@@ -96,13 +96,14 @@ for i in unfall_set.find():
 print("get price list")
 for i in sb_set.find():
     code = i['code']
-    collist = db.collection_names()
+    collist = db.list_collection_names()
     if code not in collist:
         print("code:",code," is not have continue")
         continue   
     tmp_set = db[code]
     pricelist = [] 
     for j in tmp_set.find().sort("data"):
+        print(code,j)
         pricelist.append(j['derivative'])       
     pricederivatDict[code]=pricelist
 

@@ -13,7 +13,7 @@ for i in sb_set.find():
     
     code = i['code']
     
-    collist = db.collection_names()
+    collist = db.list_collection_names()
     if code not in collist:
         print("code:",code," is not have continue")
         continue
@@ -23,6 +23,7 @@ for i in sb_set.find():
     for j in tmp_set.find().sort("data"):
         if lastprice == 0:
             lastprice = j['close']
+            tmp_set.update_one({"data":j['data']},{"$set":{"derivative":0}})
             continue
         derivative = (j['close'] - lastprice)/lastprice
         tmp_set.update_one({"data":j['data']},{"$set":{"derivative":derivative}})

@@ -8,12 +8,13 @@ import datetime
 SEQ_MAX_LEN=10
 
 def deal(querySeq,majorSeq):
+    starttime = datetime.datetime.now()
     xIndex = len(querySeq) - 1
     maxY = len(majorSeq) - 1
     dist = float('inf')
     path = []
     costMatrix = getCostMatrix(querySeq,majorSeq)
-    print("costMatrix:",costMatrix)
+#     print("costMatrix:",costMatrix)
     minY = xIndex
     if minY > maxY:
         minY = maxY
@@ -21,10 +22,8 @@ def deal(querySeq,majorSeq):
         yIndexStart = 0
         if i > (SEQ_MAX_LEN-1):
             yIndexStart = i-SEQ_MAX_LEN+1
-        starttime = datetime.datetime.now()
         tmpDist,tmpPath = getDtw(costMatrix,xIndex,i,yIndexStart)
-        endtime = datetime.datetime.now()
-#         print("xIndex:",xIndex,",yIndex:",i,",dist:",tmpDist,",usetime:",(endtime - starttime).seconds)
+#         print("xIndex:",xIndex,",yIndex:",i,",dist:",tmpDist)
         if tmpDist == 0:
 #             print("this is the zore")
             dist = tmpDist
@@ -34,7 +33,8 @@ def deal(querySeq,majorSeq):
 #             print("this is the nearest")
             dist = tmpDist
             path = tmpPath
-    print("the nearest dist is:",dist)
+    endtime = datetime.datetime.now()
+    print("the nearest dist is:",dist,",usetime:",(endtime - starttime).seconds)
     return dist,path
 
 def getCostMatrix(querySeq,majorSeq):

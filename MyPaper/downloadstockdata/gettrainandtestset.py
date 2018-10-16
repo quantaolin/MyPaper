@@ -5,12 +5,12 @@ Created on 2018-08-11 10:52
 '''
 from pymongo import MongoClient
 
-TRAIN_PERCENT=0.8
+TRAIN_PERCENT=0.5
 
 conn = MongoClient('127.0.0.1', 27017)
 db = conn.mydb
 
-sb_set = db.sb_set
+sb_set = db.sb_300_set
 trainset = db.train_sb_set
 testset = db.test_sb_set
 

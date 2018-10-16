@@ -44,7 +44,7 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict):
         pricederivatList = pricederivatDict[key]
         for indexgroup in value:
             mainpriceseq = pricederivatList[indexgroup[0]:indexgroup[1]+1]
-            dist, cost, path = subsequencedtw.deal(queryseq, mainpriceseq)
+            dist, path = subsequencedtw.deal(queryseq, mainpriceseq)
             print("false dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
             if dist <= DTW_DISTANCE_THRESHOLD:
                 false_to_true_count += 1

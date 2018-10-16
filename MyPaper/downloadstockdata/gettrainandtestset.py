@@ -10,7 +10,7 @@ TRAIN_PERCENT=0.5
 conn = MongoClient('127.0.0.1', 27017)
 db = conn.mydb
 
-sb_set = db.sb_300_set
+sb_set = db.sb_50_set
 trainset = db.train_sb_set
 testset = db.test_sb_set
 

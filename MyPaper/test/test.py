@@ -6,7 +6,7 @@ Created on 2018-08-11 23:41
 from pymongo import MongoClient
 from dataprocess import subsequencedtw
 
-DTW_DISTANCE_THRESHOLD=10
+DTW_DISTANCE_THRESHOLD=100
 retracement_tolerance = 0.2
 rebound_trend_confirm = 0.3
 
@@ -24,7 +24,7 @@ conn = MongoClient('127.0.0.1', 27017)
 db = conn.mydb
 sb_set = db.test_sb_set
 test_result_set = db.test_result_set
-all_sb_set = db.sb_set
+all_sb_set = db.sb_50_set
 rise_feature_set = db.rise_feature_set
 fall_feature_set = db.fall_feature_set
 

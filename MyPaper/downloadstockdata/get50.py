@@ -14,4 +14,5 @@ sb_50_set = db.sb_50_set
 sb = ts.get_sz50s()
 
 for index,item in sb.iterrows():
+    print(item['code'])
     sb_50_set.insert({"code":item['code']})

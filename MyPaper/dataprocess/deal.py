@@ -110,6 +110,7 @@ print("del rise")
 for key,value in riseDict.items():
     pricederivatList = pricederivatDict[key]
     print("del stock:",key)
+    feature_group=[]
     for indexgroup in value:
         startindex=indexgroup[0]
         endindex=indexgroup[1]
@@ -125,12 +126,14 @@ for key,value in riseDict.items():
                 print("seqentropy:",seqentropy,"gain:",gain)
                 if gain >= GAIN_THRESHOLD:
                     print("get stock:",key,"begin,startindex:",startindex+offset,",endindex:",startindex+offset+len-1)
-                    rise_feature_set.insert({"code":key,"startindex":startindex+offset,"endindex":startindex+offset+len-1})
+                    feature_group.append([startindex+offset,startindex+offset+len-1])
+    rise_feature_set.insert({"code":key,"featuregroup":feature_group})
                     
 print("del fall")                     
 for key,value in fallDict.items():
     pricederivatList = pricederivatDict[key]
     print("del stock:",key)
+    feature_group=[]
     for indexgroup in value:
         startindex=indexgroup[0]
         endindex=indexgroup[1]
@@ -146,4 +149,5 @@ for key,value in fallDict.items():
                 print("seqentropy:",seqentropy,"gain:",gain)
                 if gain >= GAIN_THRESHOLD:
                     print("get stock:",key,"success,startindex:",startindex+offset,",endindex:",startindex+offset+len-1)
-                    fall_feature_set.insert({"code":key,"startindex":startindex+offset,"endindex":startindex+offset+len-1})
+                    feature_group.append([startindex+offset,startindex+offset+len-1])
+    fall_feature_set.insert({"code":key,"featuregroup":feature_group})

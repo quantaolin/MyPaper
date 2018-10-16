@@ -50,9 +50,9 @@ print("get feature set")
 riseFeatureDict={}
 fallFeatureDict={}
 for i in rise_feature_set.find():
-    riseFeatureDict[i['code']]=[i['startindex'],i['endindex']]
+    riseFeatureDict[i['code']]=i['featuregroup']
 for i in fall_feature_set.find():
-    fallFeatureDict[i['code']]=[i['startindex'],i['endindex']]
+    fallFeatureDict[i['code']]=i['featuregroup']
 
 print("deal test data")
 for i in sb_set.find():
@@ -64,9 +64,13 @@ for i in sb_set.find():
     testPriceSeq = pricederivatDict[code]
     for key,value in riseFeatureDict.items():
         print("begin matching feature,code:",code,",featurecode:",key,",riseandfallflag:",1,",index:",value)
-        featurePriceSeq = pricederivatDict[key][value[0]:value[1]]
-        getResult(featurePriceSeq,testPriceSeq,1,code)
+        for indexGroup in value:
+            featurePriceSeq = pricederivatDict[key][indexGroup[0]:indexGroup[1]]
+            getResult(featurePriceSeq,testPriceSeq,1,code)
+        
     for key,value in fallFeatureDict.items():
         print("begin matching feature,code:",code,",featurecode:",key,",riseandfallflag:",-1,",index:",value)
-        featurePriceSeq = pricederivatDict[key][value[0]:value[1]]
-        getResult(featurePriceSeq,testPriceSeq,-1,code)
+        for indexGroup in value:
+            featurePriceSeq = pricederivatDict[key][indexGroup[0]:indexGroup[1]]
+            getResult(featurePriceSeq,testPriceSeq,-1,code)
+        

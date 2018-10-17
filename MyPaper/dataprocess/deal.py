@@ -7,7 +7,7 @@ from pymongo import MongoClient
 import math
 import subsequencedtw
 
-GAIN_THRESHOLD=0.5
+GAIN_THRESHOLD=0.1
 DTW_DISTANCE_THRESHOLD=200
 SEQ_MIN_LEN=20
 SEQ_MAX_LEN=20
@@ -140,7 +140,7 @@ for key,value in riseDict.items():
         for len in range(SEQ_MIN_LEN,SEQ_MAX_LEN+1):
             if len > (endindex-startindex+1):
                 break
-            for offset in range(0,endindex-startindex+1-len+1,int(len/2)):
+            for offset in range(0,endindex-startindex+1-len+1):
                 print("get stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",len,",offset:",offset)
                 queryseq=pricederivatList[startindex+offset:startindex+offset+len]
                 print("queryseq:",queryseq)
@@ -163,7 +163,7 @@ for key,value in fallDict.items():
         for len in range(SEQ_MIN_LEN,SEQ_MAX_LEN+1):
             if len > (endindex-startindex+1):
                 break
-            for offset in range(0,endindex-startindex+1-len+1,int(len/2)):
+            for offset in range(0,endindex-startindex+1-len+1):
                 print("get stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",len,",offset:",offset)
                 queryseq=pricederivatList[startindex+offset:startindex+offset+len]
                 print("queryseq:",queryseq)

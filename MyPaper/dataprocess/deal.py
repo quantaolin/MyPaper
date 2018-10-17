@@ -17,7 +17,7 @@ db = conn.mydb
 dtw_result_set = db.dtw_result_set
 
 def saveDtw(queryCode,queryStartIndex,queryEndIndex,majorCode,majorStartIndex,majorEndIndex,dist,path):
-    rise_feature_set.insert({"querycode":queryCode,"querystartindex":queryStartIndex,"queryendindex":queryEndIndex,"majorcode":majorCode,
+    rise_feature_set.insert_one({"querycode":queryCode,"querystartindex":queryStartIndex,"queryendindex":queryEndIndex,"majorcode":majorCode,
                              "majorstartindex":majorStartIndex,"majorendindex":majorEndIndex,"dist":dist,"path":path})
 
 def queryDtw(queryCode,queryStartIndex,queryEndIndex,majorCode,majorStartIndex,majorEndIndex):
@@ -146,7 +146,7 @@ for key,value in riseDict.items():
                 if gain >= GAIN_THRESHOLD:
                     print("get stock:",key,"begin,startindex:",startindex+offset,",endindex:",startindex+offset+len-1)
                     feature_group.append([startindex+offset,startindex+offset+len-1])
-    rise_feature_set.insert({"code":key,"featuregroup":feature_group})
+    rise_feature_set.insert_one({"code":key,"featuregroup":feature_group})
                     
 print("del fall")                     
 for key,value in fallDict.items():
@@ -169,4 +169,4 @@ for key,value in fallDict.items():
                 if gain >= GAIN_THRESHOLD:
                     print("get stock:",key,"success,startindex:",startindex+offset,",endindex:",startindex+offset+len-1)
                     feature_group.append([startindex+offset,startindex+offset+len-1])
-    fall_feature_set.insert({"code":key,"featuregroup":feature_group})
+    fall_feature_set.insert_one({"code":key,"featuregroup":feature_group})

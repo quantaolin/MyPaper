@@ -9,8 +9,8 @@ import subsequencedtw
 
 GAIN_THRESHOLD=0.5
 DTW_DISTANCE_THRESHOLD=100
-SEQ_MIN_LEN=10
-SEQ_MAX_LEN=10
+SEQ_MIN_LEN=20
+SEQ_MAX_LEN=20
 
 conn = MongoClient('127.0.0.1', 27017)
 db = conn.mydb

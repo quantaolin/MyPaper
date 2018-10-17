@@ -12,10 +12,10 @@ db = conn.mydb
  
 trainset = db.train_sb_set
 testset = db.test_sb_set
-trainset.insert({"code":"000001train"})
-trainset.insert({"code":"399001train"})
-testset.insert({"code":"000001test"})
-testset.insert({"code":"399001test"})
+trainset.insert_one({"code":"000001train"})
+trainset.insert_one({"code":"399001train"})
+testset.insert_one({"code":"000001test"})
+testset.insert_one({"code":"399001test"})
 
 sbshtrain = ts.get_k_data("000001",start= "2003-01-01",end= '2012-12-31')
 shtrain_set = db['000001train']

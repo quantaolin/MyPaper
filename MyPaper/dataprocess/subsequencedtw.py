@@ -35,7 +35,7 @@ def deal(querySeq,majorSeq):
             dist = tmpDist
             path = tmpPath
     endtime = datetime.datetime.now()
-    print("the nearest dist is:",dist,",usetime:",(endtime - starttime).seconds)
+#     print("the nearest dist is:",dist,",usetime:",(endtime - starttime).seconds)
     return dist,path
 
 def getCostMatrix(querySeq,majorSeq):
@@ -49,6 +49,25 @@ def getCostMatrix(querySeq,majorSeq):
             row.append(distance)
         costMatrix.append(row)
     return costMatrix
+
+def getEDistance(costMatrix,xIndex,yIndex,minY):
+    if xIndex == 0 and yIndex > minY:
+        nextDistance,nextPath = getEDistance(costMatrix,xIndex,yIndex-1,minY)
+        path=[[xIndex,yIndex]]
+        path.extend(nextPath)
+        return costMatrix[xIndex][yIndex]+nextDistance,path
+    elif xIndex > 0 and yIndex == minY:
+        nextDistance,nextPath = getEDistance(costMatrix,xIndex-1,yIndex,minY)
+        path=[[xIndex,yIndex]]
+        path.extend(nextPath)
+        return costMatrix[xIndex][yIndex]+nextDistance,path
+    elif xIndex == 0 and yIndex == minY:
+        return costMatrix[xIndex][yIndex],[[xIndex,yIndex]]
+    else :
+        nextDistance,nextPath = getEDistance(costMatrix,xIndex-1,yIndex-1,minY)
+        path=[[xIndex,yIndex]]
+        path.extend(nextPath)
+        return costMatrix[xIndex][yIndex]+nextDistance,path
 
 def getDtw(costMatrix,xIndex,yIndex,minY):
     if abs(yIndex-xIndex) > DTW_WINDOW_T:

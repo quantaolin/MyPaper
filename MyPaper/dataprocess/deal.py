@@ -8,7 +8,7 @@ import math
 import subsequencedtw
 
 GAIN_THRESHOLD=0.5
-DTW_DISTANCE_THRESHOLD=100
+DTW_DISTANCE_THRESHOLD=200
 SEQ_MIN_LEN=20
 SEQ_MAX_LEN=20
 
@@ -53,7 +53,7 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict,queryCode,querySt
             if dist == None:
                 dist, path = subsequencedtw.deal(queryseq, mainpriceseq)
                 saveDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1],dist,path)
-            print("true dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
+#             print("true dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
             if dist <= DTW_DISTANCE_THRESHOLD:
                 true_to_true_count += 1
             else:
@@ -66,7 +66,7 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict,queryCode,querySt
             if dist == None:
                 dist, path = subsequencedtw.deal(queryseq, mainpriceseq)
                 saveDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1],dist,path)         
-            print("false dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
+#             print("false dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
             if dist <= DTW_DISTANCE_THRESHOLD:
                 false_to_true_count += 1
             else:
@@ -76,10 +76,14 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict,queryCode,querySt
     ff=(true_to_false_count+false_to_false_count)/totalcount
     pta=true_to_true_count/(true_to_true_count+false_to_true_count)
     ptb=false_to_true_count/(true_to_true_count+false_to_true_count)
-    i1= -pta*math.log(pta,2)-ptb*math.log(ptb,2)
+    i1=0
+    if pta != 0 and ptb != 0:
+        i1= -pta*math.log(pta,2)-ptb*math.log(ptb,2)
     pfa=true_to_false_count/(true_to_false_count+false_to_false_count)
     pfb=false_to_false_count/(true_to_false_count+false_to_false_count)
-    i2= -pfa*math.log(pfa,2)-pfb*math.log(pfb,2)
+    i2=0
+    if pfa != 0 and pfb != 0:
+        i2= -pfa*math.log(pfa,2)-pfb*math.log(pfb,2)   
     return ft*i1+ff*i2
 
 sb_set = db.train_sb_set

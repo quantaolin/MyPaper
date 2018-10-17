@@ -5,7 +5,7 @@ Created on 2018-08-19 01:54
 '''
 import datetime
 
-SEQ_MAX_LEN=10
+SEQ_MAX_LEN=20
 
 def deal(querySeq,majorSeq):
     starttime = datetime.datetime.now()

@@ -23,7 +23,7 @@ def saveDtw(queryCode,queryStartIndex,queryEndIndex,majorCode,majorStartIndex,ma
 def queryDtw(queryCode,queryStartIndex,queryEndIndex,majorCode,majorStartIndex,majorEndIndex):
     re = rise_feature_set.find_one({"querycode":queryCode,"querystartindex":queryStartIndex,"queryendindex":queryEndIndex,"majorcode":majorCode,
                              "majorstartindex":majorStartIndex,"majorendindex":majorEndIndex})
-    if re.count() == 0:
+    if re is None:
         return None,None
     return re['dist'],re['path']
 

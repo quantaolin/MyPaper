@@ -12,6 +12,21 @@ DTW_DISTANCE_THRESHOLD=100
 SEQ_MIN_LEN=10
 SEQ_MAX_LEN=10
 
+conn = MongoClient('127.0.0.1', 27017)
+db = conn.mydb
+dtw_result_set = db.dtw_result_set
+
+def saveDtw(queryCode,queryStartIndex,queryEndIndex,majorCode,majorStartIndex,majorEndIndex,dist,path):
+    rise_feature_set.insert({"querycode":queryCode,"querystartindex":queryStartIndex,"queryendindex":queryEndIndex,"majorcode":majorCode,
+                             "majorstartindex":majorStartIndex,"majorendindex":majorEndIndex,"dist":dist,"path":path})
+
+def queryDtw(queryCode,queryStartIndex,queryEndIndex,majorCode,majorStartIndex,majorEndIndex):
+    re = rise_feature_set.find_one({"querycode":queryCode,"querystartindex":queryStartIndex,"queryendindex":queryEndIndex,"majorcode":majorCode,
+                             "majorstartindex":majorStartIndex,"majorendindex":majorEndIndex})
+    if re.count() == 0:
+        return None,None
+    return re['dist'],re['path']
+
 def getentropybyset(aset,bset):
     acount=0
     bcount=0
@@ -25,7 +40,7 @@ def getentropybyset(aset,bset):
     pb = bcount/(acount+bcount)
     return -pa*math.log(pa,2)-pb*math.log(pb,2)
 
-def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict):
+def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict,queryCode,queryStartIndex,queryEndIndex):
     true_to_true_count=0
     true_to_false_count=0
     false_to_true_count=0
@@ -34,7 +49,10 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict):
         pricederivatList = pricederivatDict[key]
         for indexgroup in value:
             mainpriceseq = pricederivatList[indexgroup[0]:indexgroup[1]+1]
-            dist, path = subsequencedtw.deal(queryseq, mainpriceseq)
+            dist, path = queryDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1])
+            if dist == None:
+                dist, path = subsequencedtw.deal(queryseq, mainpriceseq)
+                saveDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1],dist,path)
             print("true dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
             if dist <= DTW_DISTANCE_THRESHOLD:
                 true_to_true_count += 1
@@ -44,7 +62,10 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict):
         pricederivatList = pricederivatDict[key]
         for indexgroup in value:
             mainpriceseq = pricederivatList[indexgroup[0]:indexgroup[1]+1]
-            dist, path = subsequencedtw.deal(queryseq, mainpriceseq)
+            dist, path = queryDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1])
+            if dist == None:
+                dist, path = subsequencedtw.deal(queryseq, mainpriceseq)
+                saveDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1],dist,path)         
             print("false dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
             if dist <= DTW_DISTANCE_THRESHOLD:
                 false_to_true_count += 1
@@ -61,8 +82,6 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict):
     i2= -pfa*math.log(pfa,2)-pfb*math.log(pfb,2)
     return ft*i1+ff*i2
 
-conn = MongoClient('127.0.0.1', 27017)
-db = conn.mydb
 sb_set = db.train_sb_set
 rise_set = db.rise_set
 unrise_set = db.unrise_set
@@ -121,7 +140,7 @@ for key,value in riseDict.items():
                 print("get stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",len,",offset:",offset)
                 queryseq=pricederivatList[startindex+offset:startindex+offset+len]
                 print("queryseq:",queryseq)
-                seqentropy=getseqentropy(queryseq,riseDict,unriseDict,pricederivatDict)
+                seqentropy=getseqentropy(queryseq,riseDict,unriseDict,pricederivatDict,key,startindex+offset,startindex+offset+len-1)
                 gain=riseGroupEntropy-seqentropy
                 print("seqentropy:",seqentropy,"gain:",gain)
                 if gain >= GAIN_THRESHOLD:
@@ -144,7 +163,7 @@ for key,value in fallDict.items():
                 print("get stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",len,",offset:",offset)
                 queryseq=pricederivatList[startindex+offset:startindex+offset+len]
                 print("queryseq:",queryseq)
-                seqentropy=getseqentropy(queryseq,fallDict,unfallDict,pricederivatDict)
+                seqentropy=getseqentropy(queryseq,fallDict,unfallDict,pricederivatDict,key,startindex+offset,startindex+offset+len-1)
                 gain=fallGroupEntropy-seqentropy
                 print("seqentropy:",seqentropy,"gain:",gain)
                 if gain >= GAIN_THRESHOLD:

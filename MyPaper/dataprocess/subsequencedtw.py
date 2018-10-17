@@ -6,7 +6,7 @@ Created on 2018-08-19 01:54
 import datetime
 
 SEQ_MAX_LEN=20
-DTW_WINDOW_T=5
+DTW_WINDOW_T=4
 
 def deal(querySeq,majorSeq):
     starttime = datetime.datetime.now()
@@ -53,7 +53,7 @@ def getCostMatrix(querySeq,majorSeq):
 def getDtw(costMatrix,xIndex,yIndex,minY):
     if abs(yIndex-xIndex) > DTW_WINDOW_T:
         return float("inf"),[[xIndex,yIndex]]
-    if xIndex == 0 and yIndex > minY:
+    elif xIndex == 0 and yIndex > minY:
         nextDistance,nextPath = getDtw(costMatrix,xIndex,yIndex-1,minY)
         path=[[xIndex,yIndex]]
         path.extend(nextPath)

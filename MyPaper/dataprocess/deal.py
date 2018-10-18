@@ -17,11 +17,11 @@ db = conn.mydb
 dtw_result_set = db.dtw_result_set
 
 def saveDtw(queryCode,queryStartIndex,queryEndIndex,majorCode,majorStartIndex,majorEndIndex,dist,path):
-    rise_feature_set.insert_one({"querycode":queryCode,"querystartindex":queryStartIndex,"queryendindex":queryEndIndex,"majorcode":majorCode,
+    dtw_result_set.insert_one({"querycode":queryCode,"querystartindex":queryStartIndex,"queryendindex":queryEndIndex,"majorcode":majorCode,
                              "majorstartindex":majorStartIndex,"majorendindex":majorEndIndex,"dist":dist,"path":path})
 
 def queryDtw(queryCode,queryStartIndex,queryEndIndex,majorCode,majorStartIndex,majorEndIndex):
-    re = rise_feature_set.find_one({"querycode":queryCode,"querystartindex":queryStartIndex,"queryendindex":queryEndIndex,"majorcode":majorCode,
+    re = dtw_result_set.find_one({"querycode":queryCode,"querystartindex":queryStartIndex,"queryendindex":queryEndIndex,"majorcode":majorCode,
                              "majorstartindex":majorStartIndex,"majorendindex":majorEndIndex})
     if re is None:
         return None,None

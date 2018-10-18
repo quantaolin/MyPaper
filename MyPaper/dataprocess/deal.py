@@ -8,13 +8,13 @@ import math
 import subsequencedtw
 
 GAIN_THRESHOLD=0.1
-DTW_DISTANCE_THRESHOLD=200
+DTW_DISTANCE_THRESHOLD=250
 SEQ_MIN_LEN=20
 SEQ_MAX_LEN=20
 
 conn = MongoClient('127.0.0.1', 27017)
 db = conn.mydb
-dtw_result_set = db.dtw_result_set
+dtw_result_set = db.edis_result_set
 
 def saveDtw(queryCode,queryStartIndex,queryEndIndex,majorCode,majorStartIndex,majorEndIndex,dist,path):
     dtw_result_set.insert_one({"querycode":queryCode,"querystartindex":queryStartIndex,"queryendindex":queryEndIndex,"majorcode":majorCode,
@@ -134,6 +134,7 @@ for key,value in riseDict.items():
     pricederivatList = pricederivatDict[key]
     print("del stock:",key)
     feature_group=[]
+    gain_group=[]
     for indexgroup in value:
         startindex=indexgroup[0]
         endindex=indexgroup[1]
@@ -150,13 +151,15 @@ for key,value in riseDict.items():
                 if gain >= GAIN_THRESHOLD:
                     print("get stock:",key,"begin,startindex:",startindex+offset,",endindex:",startindex+offset+len-1)
                     feature_group.append([startindex+offset,startindex+offset+len-1])
-    rise_feature_set.insert_one({"code":key,"featuregroup":feature_group})
+                    gain_group.append(gain)
+    rise_feature_set.insert_one({"code":key,"featuregroup":feature_group,"gaingroup":gain_group})
                     
 print("del fall")                     
 for key,value in fallDict.items():
     pricederivatList = pricederivatDict[key]
     print("del stock:",key)
     feature_group=[]
+    gain_group=[]
     for indexgroup in value:
         startindex=indexgroup[0]
         endindex=indexgroup[1]
@@ -173,4 +176,5 @@ for key,value in fallDict.items():
                 if gain >= GAIN_THRESHOLD:
                     print("get stock:",key,"success,startindex:",startindex+offset,",endindex:",startindex+offset+len-1)
                     feature_group.append([startindex+offset,startindex+offset+len-1])
-    fall_feature_set.insert_one({"code":key,"featuregroup":feature_group})
+                    gain_group.append(gain)
+    fall_feature_set.insert_one({"code":key,"featuregroup":feature_group,"gaingroup":gain_group})

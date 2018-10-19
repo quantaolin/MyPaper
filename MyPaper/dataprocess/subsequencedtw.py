@@ -24,7 +24,7 @@ def deal(querySeq,majorSeq):
         if i > (SEQ_MAX_LEN-1):
             yIndexStart = i-SEQ_MAX_LEN+1
         tmpDist,tmpPath = getDtw(costMatrix,xIndex,i,yIndexStart)
-        print("xIndex:",xIndex,",yIndex:",i,",dist:",tmpDist)
+#         print("xIndex:",xIndex,",yIndex:",i,",dist:",tmpDist)
         if tmpDist == 0:
 #             print("this is the zore")
             dist = tmpDist

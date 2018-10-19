@@ -24,7 +24,7 @@ def deal(querySeq,majorSeq):
         if i > (SEQ_MAX_LEN-1):
             yIndexStart = i-SEQ_MAX_LEN+1
         tmpDist,tmpPath = getDtw(costMatrix,xIndex,i,yIndexStart)
-#         print("xIndex:",xIndex,",yIndex:",i,",dist:",tmpDist)
+        print("xIndex:",xIndex,",yIndex:",i,",dist:",tmpDist)
         if tmpDist == 0:
 #             print("this is the zore")
             dist = tmpDist
@@ -70,7 +70,7 @@ def getEDistance(costMatrix,xIndex,yIndex,minY):
         return costMatrix[xIndex][yIndex]+nextDistance,path
 
 def getDtw(costMatrix,xIndex,yIndex,minY):
-    if abs(yIndex-xIndex) > DTW_WINDOW_T:
+    if abs(yIndex-minY-xIndex) > DTW_WINDOW_T:
         return float("inf"),[[xIndex,yIndex]]
     elif xIndex == 0 and yIndex > minY:
         nextDistance,nextPath = getDtw(costMatrix,xIndex,yIndex-1,minY)

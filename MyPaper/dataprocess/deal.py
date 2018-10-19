@@ -49,6 +49,7 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict,queryCode,querySt
         pricederivatList = pricederivatDict[key]
         for indexgroup in value:
             mainpriceseq = pricederivatList[indexgroup[0]:indexgroup[1]+1]
+            print(mainpriceseq)
             dist, path = queryDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1])
             if dist == None:
                 dist, path = subsequencedtw.deal(queryseq, mainpriceseq)

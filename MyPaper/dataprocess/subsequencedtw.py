@@ -9,7 +9,7 @@ SEQ_MAX_LEN=10
 DTW_WINDOW_T=4
 
 def deal(querySeq,majorSeq):
-    starttime = datetime.datetime.now()
+#     starttime = datetime.datetime.now()
     xIndex = len(querySeq) - 1
     maxY = len(majorSeq) - 1
     dist = float('inf')

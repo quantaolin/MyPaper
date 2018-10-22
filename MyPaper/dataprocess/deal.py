@@ -8,20 +8,20 @@ import math
 import subsequencedtw
 
 GAIN_THRESHOLD=0.1
-DTW_DISTANCE_THRESHOLD=100
-SEQ_MIN_LEN=10
-SEQ_MAX_LEN=10 
+DTW_DISTANCE_THRESHOLD=200
+SEQ_MIN_LEN=20
+SEQ_MAX_LEN=20 
 
 conn = MongoClient('127.0.0.1', 27017)
 db = conn.mydb
-dtw_result_set = db.dtw_result_set
+edist_result_set = db.edist_result_set
 
-def saveDtw(queryCode,queryStartIndex,queryEndIndex,majorCode,majorStartIndex,majorEndIndex,dist,path):
-    dtw_result_set.insert_one({"querycode":queryCode,"querystartindex":queryStartIndex,"queryendindex":queryEndIndex,"majorcode":majorCode,
+def saveEdis(queryCode,queryStartIndex,queryEndIndex,majorCode,majorStartIndex,majorEndIndex,dist,path):
+    edist_result_set.insert_one({"querycode":queryCode,"querystartindex":queryStartIndex,"queryendindex":queryEndIndex,"majorcode":majorCode,
                              "majorstartindex":majorStartIndex,"majorendindex":majorEndIndex,"dist":dist,"path":path})
 
-def queryDtw(queryCode,queryStartIndex,queryEndIndex,majorCode,majorStartIndex,majorEndIndex):
-    re = dtw_result_set.find_one({"querycode":queryCode,"querystartindex":queryStartIndex,"queryendindex":queryEndIndex,"majorcode":majorCode,
+def queryEdis(queryCode,queryStartIndex,queryEndIndex,majorCode,majorStartIndex,majorEndIndex):
+    re = edist_result_set.find_one({"querycode":queryCode,"querystartindex":queryStartIndex,"queryendindex":queryEndIndex,"majorcode":majorCode,
                              "majorstartindex":majorStartIndex,"majorendindex":majorEndIndex})
     if re is None:
         return None,None
@@ -49,10 +49,10 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict,queryCode,querySt
         pricederivatList = pricederivatDict[key]
         for indexgroup in value:
             mainpriceseq = pricederivatList[indexgroup[0]:indexgroup[1]+1]
-            dist, path = queryDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1])
+            dist, path = queryEdis(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1])
             if dist == None:
                 dist, path = subsequencedtw.deal(queryseq, mainpriceseq)
-                saveDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1],dist,path)
+                saveEdis(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1],dist,path)
 #             print("true dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
             if dist <= DTW_DISTANCE_THRESHOLD:
                 true_to_true_count += 1
@@ -62,10 +62,10 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict,queryCode,querySt
         pricederivatList = pricederivatDict[key]
         for indexgroup in value:
             mainpriceseq = pricederivatList[indexgroup[0]:indexgroup[1]+1]
-            dist, path = queryDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1])
+            dist, path = queryEdis(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1])
             if dist == None:
                 dist, path = subsequencedtw.deal(queryseq, mainpriceseq)
-                saveDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1],dist,path)         
+                saveEdis(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1],dist,path)         
 #             print("false dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
             if dist <= DTW_DISTANCE_THRESHOLD:
                 false_to_true_count += 1
@@ -141,7 +141,7 @@ for key,value in riseDict.items():
         for len in range(SEQ_MIN_LEN,SEQ_MAX_LEN+1):
             if len > (endindex-startindex+1):
                 break
-            for offset in range(0,endindex-startindex+1-len+1,5):
+            for offset in range(0,endindex-startindex+1-len+1):
                 print("get stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",len,",offset:",offset)
                 queryseq=pricederivatList[startindex+offset:startindex+offset+len]
                 print("queryseq:",queryseq)
@@ -166,7 +166,7 @@ for key,value in fallDict.items():
         for len in range(SEQ_MIN_LEN,SEQ_MAX_LEN+1):
             if len > (endindex-startindex+1):
                 break
-            for offset in range(0,endindex-startindex+1-len+1,5):
+            for offset in range(0,endindex-startindex+1-len+1):
                 print("get stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",len,",offset:",offset)
                 queryseq=pricederivatList[startindex+offset:startindex+offset+len]
                 print("queryseq:",queryseq)

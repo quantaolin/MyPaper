@@ -5,7 +5,7 @@ Created on 2018-08-19 01:54
 '''
 import datetime
 
-SEQ_MAX_LEN=10
+SEQ_MAX_LEN=20
 DTW_WINDOW_T=4
 
 def deal(querySeq,majorSeq):
@@ -23,7 +23,7 @@ def deal(querySeq,majorSeq):
         yIndexStart = 0
         if i > (SEQ_MAX_LEN-1):
             yIndexStart = i-SEQ_MAX_LEN+1
-        tmpDist,tmpPath = getDtw(costMatrix,xIndex,i,yIndexStart)
+        tmpDist,tmpPath = getEDistance(costMatrix,xIndex,i,yIndexStart)
 #         print("xIndex:",xIndex,",yIndex:",i,",dist:",tmpDist)
         if tmpDist == 0:
 #             print("this is the zore")

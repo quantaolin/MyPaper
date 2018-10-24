@@ -9,13 +9,19 @@ Created on 2018-07-07 09:17
 
 conn = MongoClient('127.0.0.1', 27017)
 db = conn.mydb
- 
+
+shszset = db.shsz_sb_set
 trainset = db.train_sb_set
 testset = db.test_sb_set
 trainset.insert_one({"code":"000001train"})
 trainset.insert_one({"code":"399001train"})
 testset.insert_one({"code":"000001test"})
 testset.insert_one({"code":"399001test"})
+
+shszset.insert_one({"code":"000001train"})
+shszset.insert_one({"code":"399001train"})
+shszset.insert_one({"code":"000001test"})
+shszset.insert_one({"code":"399001test"})
 
 sbshtrain = ts.get_k_data("000001",start= "2003-01-01",end= '2012-12-31')
 shtrain_set = db['000001train']

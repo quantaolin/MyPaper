@@ -6,16 +6,23 @@ Created on 2018-08-11 23:41
 from pymongo import MongoClient
 from dataprocess import subsequencedtw
 
-DTW_DISTANCE_THRESHOLD=100
+DTW_DISTANCE_THRESHOLD=200
 retracement_tolerance = 0.2
 rebound_trend_confirm = 0.3
+SEQ_MAX_LEN=20
 
 def getResult(featurePriceSeq,testPriceSeq,riseAndFallFlag,code):
     costMatrix = subsequencedtw.getCostMatrix(featurePriceSeq, testPriceSeq)
     xIndex = len(featurePriceSeq) - 1
     maxY = len(testPriceSeq) - 1
-    for i in range(maxY + 1):
-        tmpDist,tmpPath = subsequencedtw.getDtw(costMatrix,xIndex,maxY-i)
+    minY = xIndex
+    if minY > maxY:
+        minY = maxY
+    for i in range(minY,maxY + 1):
+        yIndexStart = 0
+        if i > (SEQ_MAX_LEN-1):
+            yIndexStart = i-SEQ_MAX_LEN+1
+        tmpDist,tmpPath = subsequencedtw.getDtw(costMatrix,xIndex,i,yIndexStart)
         if tmpDist < DTW_DISTANCE_THRESHOLD:
             print("for code:",code,"this is feature index:",maxY-i,",flag:",riseAndFallFlag)
             test_result_set.insert({"code":code,"riseAndFallFlag":riseAndFallFlag,"index":maxY-i})

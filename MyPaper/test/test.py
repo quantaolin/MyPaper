@@ -6,7 +6,7 @@ Created on 2018-08-11 23:41
 from pymongo import MongoClient
 from dataprocess import subsequencedtw
 
-DTW_DISTANCE_THRESHOLD=200
+DTW_DISTANCE_THRESHOLD=150
 
 def getResult(featurePriceSeq,testPriceSeq,riseAndFallFlag,code):
     distanceMatrix = subsequencedtw.getDistanceMatrix(featurePriceSeq, testPriceSeq)

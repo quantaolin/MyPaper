@@ -8,7 +8,7 @@ import math
 import subsequencedtw
 
 GAIN_THRESHOLD=0.1
-DTW_DISTANCE_THRESHOLD=150
+DTW_DISTANCE_THRESHOLD=100
 SEQ_MIN_LEN=20
 SEQ_MAX_LEN=20 
 
@@ -49,10 +49,11 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict,queryCode,querySt
         pricederivatList = pricederivatDict[key]
         for indexgroup in value:
             mainpriceseq = pricederivatList[indexgroup[0]:indexgroup[1]+1]
-            dist, offset = querySubDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1])
-            if dist == None:
-                dist, offset = subsequencedtw.subDtw(queryseq, mainpriceseq)
-                saveSubDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1],dist,offset)
+            dist, offset = subsequencedtw.subDtw(queryseq, mainpriceseq)
+#             dist, offset = querySubDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1])
+#             if dist == None:
+#                 dist, offset = subsequencedtw.subDtw(queryseq, mainpriceseq)
+#                 saveSubDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1],dist,offset)
 #             print("true dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
             if dist <= DTW_DISTANCE_THRESHOLD:
                 true_to_true_count += 1
@@ -62,10 +63,11 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict,queryCode,querySt
         pricederivatList = pricederivatDict[key]
         for indexgroup in value:
             mainpriceseq = pricederivatList[indexgroup[0]:indexgroup[1]+1]
-            dist, offset = querySubDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1])
-            if dist == None:
-                dist, offset = subsequencedtw.subDtw(queryseq, mainpriceseq)
-                saveSubDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1],dist,offset)         
+            dist, offset = subsequencedtw.subDtw(queryseq, mainpriceseq)
+#             dist, offset = querySubDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1])
+#             if dist == None:
+#                 dist, offset = subsequencedtw.subDtw(queryseq, mainpriceseq)
+#                 saveSubDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1],dist,offset)         
 #             print("false dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
             if dist <= DTW_DISTANCE_THRESHOLD:
                 false_to_true_count += 1

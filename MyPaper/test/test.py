@@ -24,8 +24,8 @@ db = conn.mydb
 sb_set = db.test_sb_set
 test_result_set = db.test_result_set
 all_sb_set = db.shsz_sb_set
-rise_feature_set = db.rise_feature_set
-fall_feature_set = db.fall_feature_set
+rise_feature_set = db.merge_rise_feature_set
+fall_feature_set = db.merge_fall_feature_set
 
 print("get price list")
 pricederivatDict={}

@@ -14,18 +14,18 @@ SEQ_MAX_LEN=20
 
 conn = MongoClient('127.0.0.1', 27017)
 db = conn.mydb
-edist_result_set = db.edist_result_set
+subdtw_result_set = db.subdtw_result_set
 
-def saveEdis(queryCode,queryStartIndex,queryEndIndex,majorCode,majorStartIndex,majorEndIndex,dist,path):
-    edist_result_set.insert_one({"querycode":queryCode,"querystartindex":queryStartIndex,"queryendindex":queryEndIndex,"majorcode":majorCode,
-                             "majorstartindex":majorStartIndex,"majorendindex":majorEndIndex,"dist":dist,"path":path})
+def saveSubDtw(queryCode,queryStartIndex,queryEndIndex,majorCode,majorStartIndex,majorEndIndex,dist,offset):
+    subdtw_result_set.insert_one({"querycode":queryCode,"querystartindex":queryStartIndex,"queryendindex":queryEndIndex,"majorcode":majorCode,
+                             "majorstartindex":majorStartIndex,"majorendindex":majorEndIndex,"dist":dist,"offset":offset})
 
-def queryEdis(queryCode,queryStartIndex,queryEndIndex,majorCode,majorStartIndex,majorEndIndex):
-    re = edist_result_set.find_one({"querycode":queryCode,"querystartindex":queryStartIndex,"queryendindex":queryEndIndex,"majorcode":majorCode,
+def querySubDtw(queryCode,queryStartIndex,queryEndIndex,majorCode,majorStartIndex,majorEndIndex):
+    re = subdtw_result_set.find_one({"querycode":queryCode,"querystartindex":queryStartIndex,"queryendindex":queryEndIndex,"majorcode":majorCode,
                              "majorstartindex":majorStartIndex,"majorendindex":majorEndIndex})
     if re is None:
         return None,None
-    return re['dist'],re['path']
+    return re['dist'],re['offset']
 
 def getentropybyset(aset,bset):
     acount=0
@@ -49,11 +49,11 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict,queryCode,querySt
         pricederivatList = pricederivatDict[key]
         for indexgroup in value:
             mainpriceseq = pricederivatList[indexgroup[0]:indexgroup[1]+1]
-            dist, path = queryEdis(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1])
+            dist, offset = querySubDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1])
             if dist == None:
-                dist, path = subsequencedtw.deal(queryseq, mainpriceseq)
-                saveEdis(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1],dist,path)
-#             print("true dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
+                dist, offset = subsequencedtw.subDtw(queryseq, mainpriceseq)
+                saveSubDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1],dist,offset)
+            print("true dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
             if dist <= DTW_DISTANCE_THRESHOLD:
                 true_to_true_count += 1
             else:
@@ -62,11 +62,11 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict,queryCode,querySt
         pricederivatList = pricederivatDict[key]
         for indexgroup in value:
             mainpriceseq = pricederivatList[indexgroup[0]:indexgroup[1]+1]
-            dist, path = queryEdis(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1])
+            dist, offset = querySubDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1])
             if dist == None:
-                dist, path = subsequencedtw.deal(queryseq, mainpriceseq)
-                saveEdis(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1],dist,path)         
-#             print("false dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
+                dist, offset = subsequencedtw.subDtw(queryseq, mainpriceseq)
+                saveSubDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1],dist,offset)         
+            print("false dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
             if dist <= DTW_DISTANCE_THRESHOLD:
                 false_to_true_count += 1
             else:

@@ -3,42 +3,23 @@ Created on 2018-08-19 01:54
 
 @author: linqt
 '''
-import datetime
+import datetime    
 
-SEQ_MAX_LEN=20
-DTW_WINDOW_T=4
+def subDtw(querySeq,majorSeq):
+    distanceMatrix = getDistanceMatrix(querySeq,majorSeq)
+    lenx = len(querySeq)
+    leny = len(majorSeq)
+    costMatrix = getCostMatrix(distanceMatrix,lenx,leny)
+    endCost = costMatrix[lenx-1]
+    minDistance = float("inf")
+    offset = 0
+    for i in range(1,leny):
+        if endCost[i] < minDistance:
+            minDistance = endCost[i]
+            offset = i-1
+    return minDistance,offset
 
-def deal(querySeq,majorSeq):
-#     starttime = datetime.datetime.now()
-    xIndex = len(querySeq) - 1
-    maxY = len(majorSeq) - 1
-    dist = float('inf')
-    path = []
-    costMatrix = getCostMatrix(querySeq,majorSeq)
-#     print("costMatrix:",costMatrix)
-    minY = xIndex
-    if minY > maxY:
-        minY = maxY
-    for i in range(minY,maxY + 1):
-        yIndexStart = 0
-        if i > (SEQ_MAX_LEN-1):
-            yIndexStart = i-SEQ_MAX_LEN+1
-        tmpDist,tmpPath = getEDistance(costMatrix,xIndex,i,yIndexStart)
-#         print("xIndex:",xIndex,",yIndex:",i,",dist:",tmpDist)
-        if tmpDist == 0:
-#             print("this is the zore")
-            dist = tmpDist
-            path = tmpPath
-            break
-        if tmpDist < dist:
-#             print("this is the nearest")
-            dist = tmpDist
-            path = tmpPath
-    endtime = datetime.datetime.now()
-#     print("the nearest dist is:",dist,",usetime:",(endtime - starttime).seconds)
-    return dist,path
-
-def getCostMatrix(querySeq,majorSeq):
+def getDistanceMatrix(querySeq,majorSeq):
     costMatrix = []
     for p in range(len(querySeq)):
         row=[]
@@ -50,50 +31,49 @@ def getCostMatrix(querySeq,majorSeq):
         costMatrix.append(row)
     return costMatrix
 
-def getEDistance(costMatrix,xIndex,yIndex,minY):
-    if xIndex == 0 and yIndex > minY:
-        nextDistance,nextPath = getEDistance(costMatrix,xIndex,yIndex-1,minY)
-        path=[[xIndex,yIndex]]
-        path.extend(nextPath)
-        return costMatrix[xIndex][yIndex]+nextDistance,path
-    elif xIndex > 0 and yIndex == minY:
-        nextDistance,nextPath = getEDistance(costMatrix,xIndex-1,yIndex,minY)
-        path=[[xIndex,yIndex]]
-        path.extend(nextPath)
-        return costMatrix[xIndex][yIndex]+nextDistance,path
-    elif xIndex == 0 and yIndex == minY:
-        return costMatrix[xIndex][yIndex],[[xIndex,yIndex]]
-    else :
-        nextDistance,nextPath = getEDistance(costMatrix,xIndex-1,yIndex-1,minY)
-        path=[[xIndex,yIndex]]
-        path.extend(nextPath)
-        return costMatrix[xIndex][yIndex]+nextDistance,path
+def min(a,b,c):
+    min = a
+    if b < min:
+        min = b
+    if c < min:
+        min = c
+    return min
 
-def getDtw(costMatrix,xIndex,yIndex,minY):
-    if abs(yIndex-minY-xIndex) > DTW_WINDOW_T:
-        return float("inf"),[[xIndex,yIndex]]
-    elif xIndex == 0 and yIndex > minY:
-        nextDistance,nextPath = getDtw(costMatrix,xIndex,yIndex-1,minY)
-        path=[[xIndex,yIndex]]
-        path.extend(nextPath)
-        return costMatrix[xIndex][yIndex]+nextDistance,path
-    elif xIndex > 0 and yIndex == minY:
-        nextDistance,nextPath = getDtw(costMatrix,xIndex-1,yIndex,minY)
-        path=[[xIndex,yIndex]]
-        path.extend(nextPath)
-        return costMatrix[xIndex][yIndex]+nextDistance,path
-    elif xIndex == 0 and yIndex == minY:
-        return costMatrix[xIndex][yIndex],[[xIndex,yIndex]]
+def getCostMatrix(distanceMatrix,lenx,leny):
+    costMatrix=[[float("inf") for i in range(leny+1)] for i in range(lenx+1)]
+    for i in range(1,leny+1):
+        costMatrix[0][i]=0
+    for i in range(1,lenx+1):
+        for j in range(1,leny+1):
+            if(i == 1) :
+                costMatrix[i][j]=distanceMatrix[i-1][j-1]
+            costMatrix[i][j]=distanceMatrix[i-1][j-1]+min(costMatrix[i-1][j],costMatrix[i][j-1],costMatrix[i-1][j-1])
+    return costMatrix
+
+def subByEd(querySeq,majorSeq):
+    xIndex = len(querySeq) - 1
+    maxY = len(majorSeq) - 1
+    dist = float('inf')
+    distanceMatrix = getDistanceMatrix(querySeq,majorSeq)
+    minY = xIndex
+    if minY > maxY:
+        minY = maxY
+        return float('inf')
+    for i in range(minY,maxY + 1):
+        yIndexStart = 0
+        if i > (len(querySeq)-1):
+            yIndexStart = i-len(querySeq)+1
+        tmpDist = getEDistance(distanceMatrix,xIndex,i,yIndexStart)
+        if tmpDist == 0:
+            dist = tmpDist
+            break
+        if tmpDist < dist:
+            dist = tmpDist
+    return dist
+
+def getEDistance(distanceMatrix,xIndex,yIndex,minY):
+    if xIndex == 0 and yIndex == minY:
+        return distanceMatrix[xIndex][yIndex]
     else :
-        nextDistance,nextPath = getDtw(costMatrix,xIndex-1,yIndex,minY)
-        nextDistance2,nextPath2 = getDtw(costMatrix,xIndex-1,yIndex-1,minY)
-        if nextDistance2 < nextDistance:
-            nextDistance = nextDistance2
-            nextPath = nextPath2
-        nextDistance3,nextPath3 = getDtw(costMatrix,xIndex,yIndex-1,minY)
-        if nextDistance3 < nextDistance:
-            nextDistance = nextDistance3
-            nextPath = nextPath3
-        path=[[xIndex,yIndex]]
-        path.extend(nextPath)
-        return costMatrix[xIndex][yIndex]+nextDistance,path
+        nextDistance = getEDistance(distanceMatrix,xIndex-1,yIndex-1,minY)
+        return distanceMatrix[xIndex][yIndex]+nextDistance

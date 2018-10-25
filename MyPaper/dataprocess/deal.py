@@ -53,7 +53,7 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict,queryCode,querySt
             if dist == None:
                 dist, offset = subsequencedtw.subDtw(queryseq, mainpriceseq)
                 saveSubDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1],dist,offset)
-            print("true dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
+#             print("true dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
             if dist <= DTW_DISTANCE_THRESHOLD:
                 true_to_true_count += 1
             else:
@@ -66,7 +66,7 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict,queryCode,querySt
             if dist == None:
                 dist, offset = subsequencedtw.subDtw(queryseq, mainpriceseq)
                 saveSubDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1],dist,offset)         
-            print("false dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
+#             print("false dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
             if dist <= DTW_DISTANCE_THRESHOLD:
                 false_to_true_count += 1
             else:

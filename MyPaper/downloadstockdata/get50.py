@@ -15,4 +15,4 @@ sb = ts.get_sz50s()
 
 for index,item in sb.iterrows():
     print(item['code'])
-    sb_50_set.insert({"code":item['code']})
+    sb_50_set.insert_one({"code":item['code']})

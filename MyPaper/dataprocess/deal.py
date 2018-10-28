@@ -7,8 +7,9 @@ from pymongo import MongoClient
 import math
 import subsequencedtw
 
-GAIN_THRESHOLD=0.1
-DTW_DISTANCE_THRESHOLD=100
+GAIN_THRESHOLD=0.5
+RISE_DTW_DISTANCE_THRESHOLD=90
+FALL_DTW_DISTANCE_THRESHOLD=520
 SEQ_MIN_LEN=20
 SEQ_MAX_LEN=20 
 
@@ -40,7 +41,10 @@ def getentropybyset(aset,bset):
     pb = bcount/(acount+bcount)
     return -pa*math.log(pa,2)-pb*math.log(pb,2)
 
-def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict,queryCode,queryStartIndex,queryEndIndex):
+def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict,queryCode,queryStartIndex,queryEndIndex,risefallflag):
+    DTW_DISTANCE_THRESHOLD=RISE_DTW_DISTANCE_THRESHOLD
+    if risefallflag == 'fall':
+        DTW_DISTANCE_THRESHOLD=FALL_DTW_DISTANCE_THRESHOLD
     true_to_true_count=0
     true_to_false_count=0
     false_to_true_count=0
@@ -54,7 +58,8 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict,queryCode,querySt
 #             if dist == None:
 #                 dist, offset = subsequencedtw.subDtw(queryseq, mainpriceseq)
 #                 saveSubDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1],dist,offset)
-#             print("true dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
+#             if risefallflag == 'fall':
+#                 print("true dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])          
             if dist <= DTW_DISTANCE_THRESHOLD:
                 true_to_true_count += 1
             else:
@@ -68,7 +73,8 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict,queryCode,querySt
 #             if dist == None:
 #                 dist, offset = subsequencedtw.subDtw(queryseq, mainpriceseq)
 #                 saveSubDtw(queryCode,queryStartIndex,queryEndIndex,key,indexgroup[0],indexgroup[1],dist,offset)         
-#             print("false dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
+#             if risefallflag == 'fall':
+#                 print("false dist:",dist,"code:",key,",startindex:",indexgroup[0],",endindex:",indexgroup[1])
             if dist <= DTW_DISTANCE_THRESHOLD:
                 false_to_true_count += 1
             else:
@@ -81,6 +87,8 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict,queryCode,querySt
     i1=0
     if pta != 0 and ptb != 0:
         i1= -pta*math.log(pta,2)-ptb*math.log(ptb,2)
+    if ff == 0:
+        return ft*i1
     pfa=true_to_false_count/(true_to_false_count+false_to_false_count)
     pfb=false_to_false_count/(true_to_false_count+false_to_false_count)
     i2=0
@@ -88,7 +96,7 @@ def getseqentropy(queryseq,trueDict,falseDict,pricederivatDict,queryCode,querySt
         i2= -pfa*math.log(pfa,2)-pfb*math.log(pfb,2)   
     return ft*i1+ff*i2
 
-sb_set = db.train_sb_set
+sb_set = db.sb_set
 rise_set = db.rise_set
 unrise_set = db.unrise_set
 fall_set = db.fall_set
@@ -140,21 +148,23 @@ for key,value in riseDict.items():
     for indexgroup in value:
         startindex=indexgroup[0]
         endindex=indexgroup[1]
-        for len in range(SEQ_MIN_LEN,SEQ_MAX_LEN+1):
-            if len > (endindex-startindex+1):
+        for stocklang in range(SEQ_MIN_LEN,SEQ_MAX_LEN+1):
+            if stocklang > (endindex-startindex+1):
                 break
-            for offset in range(0,endindex-startindex+1-len+1):
-                print("get stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",len,",offset:",offset)
-                queryseq=pricederivatList[startindex+offset:startindex+offset+len]
+            for offset in range(0,endindex-startindex+1-stocklang+1):
+                print("get stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",stocklang,",offset:",offset)
+                queryseq=pricederivatList[startindex+offset:startindex+offset+stocklang]
                 print("queryseq:",queryseq)
-                seqentropy=getseqentropy(queryseq,riseDict,unriseDict,pricederivatDict,key,startindex+offset,startindex+offset+len-1)
+                seqentropy=getseqentropy(queryseq,riseDict,unriseDict,pricederivatDict,key,startindex+offset,startindex+offset+stocklang-1,'rise')
                 gain=riseGroupEntropy-seqentropy
                 print("seqentropy:",seqentropy,"gain:",gain)
                 if gain >= GAIN_THRESHOLD:
-                    print("get stock:",key,"begin,startindex:",startindex+offset,",endindex:",startindex+offset+len-1)
-                    feature_group.append([startindex+offset,startindex+offset+len-1])
+                    print("get stock:",key,"begin,startindex:",startindex+offset,",endindex:",startindex+offset+stocklang-1)
+                    feature_group.append([startindex+offset,startindex+offset+stocklang-1])
                     gain_group.append(gain)
-    rise_feature_set.insert_one({"code":key,"featuregroup":feature_group,"gaingroup":gain_group})
+    if len(feature_group):
+        rise_feature_set.insert_one({"code":key,"featuregroup":feature_group,"gaingroup":gain_group})    
+        
                     
 print("del fall")                     
 for key,value in fallDict.items():
@@ -165,18 +175,19 @@ for key,value in fallDict.items():
     for indexgroup in value:
         startindex=indexgroup[0]
         endindex=indexgroup[1]
-        for len in range(SEQ_MIN_LEN,SEQ_MAX_LEN+1):
-            if len > (endindex-startindex+1):
+        for stocklang in range(SEQ_MIN_LEN,SEQ_MAX_LEN+1):
+            if stocklang > (endindex-startindex+1):
                 break
-            for offset in range(0,endindex-startindex+1-len+1):
-                print("get stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",len,",offset:",offset)
-                queryseq=pricederivatList[startindex+offset:startindex+offset+len]
+            for offset in range(0,endindex-startindex+1-stocklang+1):
+                print("get stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",stocklang,",offset:",offset)
+                queryseq=pricederivatList[startindex+offset:startindex+offset+stocklang]
                 print("queryseq:",queryseq)
-                seqentropy=getseqentropy(queryseq,fallDict,unfallDict,pricederivatDict,key,startindex+offset,startindex+offset+len-1)
+                seqentropy=getseqentropy(queryseq,fallDict,unfallDict,pricederivatDict,key,startindex+offset,startindex+offset+stocklang-1,'fall')
                 gain=fallGroupEntropy-seqentropy
                 print("seqentropy:",seqentropy,"gain:",gain)
                 if gain >= GAIN_THRESHOLD:
-                    print("get stock:",key,"success,startindex:",startindex+offset,",endindex:",startindex+offset+len-1)
-                    feature_group.append([startindex+offset,startindex+offset+len-1])
+                    print("get stock:",key,"success,startindex:",startindex+offset,",endindex:",startindex+offset+stocklang-1)
+                    feature_group.append([startindex+offset,startindex+offset+stocklang-1])
                     gain_group.append(gain)
-    fall_feature_set.insert_one({"code":key,"featuregroup":feature_group,"gaingroup":gain_group})
+    if len(feature_group):
+        fall_feature_set.insert_one({"code":key,"featuregroup":feature_group,"gaingroup":gain_group})    

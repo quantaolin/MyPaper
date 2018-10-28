@@ -32,7 +32,7 @@ def mergeFeatureGroup(featuregroup,gaingroup):
             tmpFeatureGroup.append(feture)
             tmpGainGroup.append(gaingroup[i])
         else:
-            if feture[0]-tmpFeatureGroup[-1][0] < 5:
+            if feture[0]-tmpFeatureGroup[-1][0] < 3:
                 tmpFeatureGroup.append(feture)
                 tmpGainGroup.append(gaingroup[i])
             else:

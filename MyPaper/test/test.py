@@ -17,7 +17,7 @@ def getResult(featurePriceSeq,testPriceSeq,riseAndFallFlag,code):
     for i in range(1,leny):
         if endCost[i] < DTW_DISTANCE_THRESHOLD:
             print("for code:",code,"this is feature index:",i-1,",flag:",riseAndFallFlag)
-            test_result_set.insert({"code":code,"riseAndFallFlag":riseAndFallFlag,"index":i-1})
+            test_result_set.insert_one({"code":code,"riseAndFallFlag":riseAndFallFlag,"index":i-1})
 
 conn = MongoClient('127.0.0.1', 27017)
 db = conn.mydb

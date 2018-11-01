@@ -109,6 +109,7 @@ unriseDict={}
 fallDict={}
 unfallDict={}
 pricederivatDict={}
+priceDict={}
 riseGroupEntropy=getentropybyset(rise_set,unrise_set)
 print("get rise entropy:",riseGroupEntropy)
 fallGroupEntropy=getentropybyset(fall_set,unfall_set)
@@ -134,14 +135,23 @@ for i in sb_set.find():
         print("code:",code," is not have continue")
         continue   
     tmp_set = db[code]
+    pricederivatelist = []
     pricelist = [] 
     for j in tmp_set.find().sort("data"):
-        pricelist.append(j['derivative'])       
-    pricederivatDict[code]=pricelist
+        pricederivatelist.append(j['derivative']) 
+        pricelist.append(j['close'])       
+    pricederivatDict[code]=pricederivatelist
+    priceDict[code]=pricelist
+
 
 print("del rise")  
 for key,value in riseDict.items():
     pricederivatList = pricederivatDict[key]
+    pricelist = priceDict[key]
+    maxprice = 0
+    for i in pricelist:
+        if i > maxprice:
+            maxprice = i
     print("del stock:",key)
     feature_group=[]
     gain_group=[]
@@ -152,6 +162,10 @@ for key,value in riseDict.items():
             if stocklang > (endindex-startindex+1):
                 break
             for offset in range(0,endindex-startindex+1-stocklang+1):
+                endprice = pricelist[startindex+offset+stocklang-1]
+                if (maxprice-endprice)/endprice < 0.2:
+                    print("stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",stocklang,",offset:",offset,"is to near max continue!!!")
+                    continue
                 print("get stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",stocklang,",offset:",offset)
                 queryseq=pricederivatList[startindex+offset:startindex+offset+stocklang]
                 print("queryseq:",queryseq)
@@ -169,6 +183,11 @@ for key,value in riseDict.items():
 print("del fall")                     
 for key,value in fallDict.items():
     pricederivatList = pricederivatDict[key]
+    pricelist = priceDict[key]
+    minprice = float("inf")
+    for i in pricelist:
+        if i < minprice:
+            minprice = i
     print("del stock:",key)
     feature_group=[]
     gain_group=[]
@@ -179,6 +198,10 @@ for key,value in fallDict.items():
             if stocklang > (endindex-startindex+1):
                 break
             for offset in range(0,endindex-startindex+1-stocklang+1):
+                endprice = pricelist[startindex+offset+stocklang-1]
+                if (endprice-minprice)/endprice < 0.2:
+                    print("stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",stocklang,",offset:",offset,"is to near min continue!!!")
+                    continue
                 print("get stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",stocklang,",offset:",offset)
                 queryseq=pricederivatList[startindex+offset:startindex+offset+stocklang]
                 print("queryseq:",queryseq)

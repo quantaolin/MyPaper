@@ -6,9 +6,13 @@ Created on 2018-08-11 23:41
 from pymongo import MongoClient
 from dataprocess import subsequencedtw
 
-DTW_DISTANCE_THRESHOLD=150
+RISE_DTW_DISTANCE_THRESHOLD=90
+FALL_DTW_DISTANCE_THRESHOLD=520
 
 def getResult(featurePriceSeq,testPriceSeq,riseAndFallFlag,code):
+    DTW_DISTANCE_THRESHOLD=RISE_DTW_DISTANCE_THRESHOLD
+    if riseAndFallFlag == -1:
+        DTW_DISTANCE_THRESHOLD=FALL_DTW_DISTANCE_THRESHOLD
     distanceMatrix = subsequencedtw.getDistanceMatrix(featurePriceSeq, testPriceSeq)
     lenx = len(featurePriceSeq)
     leny = len(testPriceSeq)

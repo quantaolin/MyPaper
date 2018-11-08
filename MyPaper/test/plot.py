@@ -33,7 +33,7 @@ for i in merge_rise_feature_set.find():
     featuregroup = i['featuregroup']
     pricelist = priceDict[code]
     for j in featuregroup:
-        featurequeue = pricelist[j[0]:j[1]]
+        featurequeue = pricelist[j[0]:j[1]+1]
         b = np.array(featurequeue)
         plt.plot(b)
         plt.grid(True) ##增加格点

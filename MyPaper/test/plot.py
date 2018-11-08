@@ -29,12 +29,25 @@ for i in sb_set.find():
     priceDict[code]=pricelist
     
 for i in merge_rise_feature_set.find():
-    
-
-for i in range(2):
-    a = [1, 2, 5, 3, 4]
-    b = np.array(a)
-    plt.plot(b)
-    plt.grid(True) ##增加格点
-    plt.axis('tight')
-    plt.show()
+    code = i['code']
+    featuregroup = i['featuregroup']
+    pricelist = priceDict[code]
+    for j in featuregroup:
+        featurequeue = pricelist[j[0]:j[1]]
+        b = np.array(featurequeue)
+        plt.plot(b)
+        plt.grid(True) ##增加格点
+        plt.axis('tight')
+        plt.show()
+        
+for i in merge_fall_feature_set.find():
+    code = i['code']
+    featuregroup = i['featuregroup']
+    pricelist = priceDict[code]
+    for j in featuregroup:
+        featurequeue = pricelist[j[0]:j[1]]
+        b = np.array(featurequeue)
+        plt.plot(b)
+        plt.grid(True) ##增加格点
+        plt.axis('tight')
+        plt.show()

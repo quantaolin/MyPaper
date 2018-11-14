@@ -199,7 +199,7 @@ for key,value in fallDict.items():
                 break
             for offset in range(0,endindex-startindex+1-stocklang+1):
                 endprice = pricelist[startindex+offset+stocklang-1]
-                if (endprice-minprice)/endprice < 0.2:
+                if (endprice-minprice)/endprice > 0.3:
                     print("stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",stocklang,",offset:",offset,"is to near min continue!!!")
                     continue
                 print("get stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",stocklang,",offset:",offset)

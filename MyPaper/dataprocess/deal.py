@@ -148,10 +148,6 @@ print("del rise")
 for key,value in riseDict.items():
     pricederivatList = pricederivatDict[key]
     pricelist = priceDict[key]
-    maxprice = 0
-    for i in pricelist:
-        if i > maxprice:
-            maxprice = i
     print("del stock:",key)
     feature_group=[]
     gain_group=[]
@@ -162,10 +158,6 @@ for key,value in riseDict.items():
             if stocklang > (endindex-startindex+1):
                 break
             for offset in range(0,endindex-startindex+1-stocklang+1):
-                endprice = pricelist[startindex+offset+stocklang-1]
-                if (maxprice-endprice)/endprice < 0.2:
-                    print("stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",stocklang,",offset:",offset,"is to near max continue!!!")
-                    continue
                 print("get stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",stocklang,",offset:",offset)
                 queryseq=pricederivatList[startindex+offset:startindex+offset+stocklang]
                 print("queryseq:",queryseq)
@@ -184,10 +176,6 @@ print("del fall")
 for key,value in fallDict.items():
     pricederivatList = pricederivatDict[key]
     pricelist = priceDict[key]
-    minprice = float("inf")
-    for i in pricelist:
-        if i < minprice:
-            minprice = i
     print("del stock:",key)
     feature_group=[]
     gain_group=[]
@@ -198,10 +186,6 @@ for key,value in fallDict.items():
             if stocklang > (endindex-startindex+1):
                 break
             for offset in range(0,endindex-startindex+1-stocklang+1):
-                endprice = pricelist[startindex+offset+stocklang-1]
-                if (endprice-minprice)/endprice > 0.3:
-                    print("stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",stocklang,",offset:",offset,"is to near min continue!!!")
-                    continue
                 print("get stock:",key,"begin,startindex:",startindex,",endindex:",endindex,",len:",stocklang,",offset:",offset)
                 queryseq=pricederivatList[startindex+offset:startindex+offset+stocklang]
                 print("queryseq:",queryseq)

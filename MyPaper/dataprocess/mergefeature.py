@@ -15,7 +15,7 @@ merge_fall_feature_set = db.merge_fall_feature_set
 def getMaxGain(gainlist):
     mainGain = 0
     index = 0
-    for i in range(gainlist):
+    for i in range(len(gainlist)):
         if gainlist[i] > mainGain:
             mainGain = gainlist[i]
             index = i
@@ -26,7 +26,7 @@ def mergeFeatureGroup(featuregroup,gaingroup):
     tmpGainGroup = []
     resultFeatureGroup = []
     resultGainGroup = []
-    for i in range(featuregroup):
+    for i in range(len(featuregroup)):
         feture = featuregroup[i]
         if len(tmpFeatureGroup) == 0:
             tmpFeatureGroup.append(feture)
@@ -41,6 +41,10 @@ def mergeFeatureGroup(featuregroup,gaingroup):
                 resultGainGroup.append(tmpGainGroup[index])
                 tmpFeatureGroup.clear()
                 tmpGainGroup.clear()
+    if tmpFeatureGroup:
+        index = getMaxGain(tmpGainGroup)
+        resultFeatureGroup.append(tmpFeatureGroup[index])
+        resultGainGroup.append(tmpGainGroup[index])
     return resultFeatureGroup,resultGainGroup
 
 for i in rise_feature_set.find():

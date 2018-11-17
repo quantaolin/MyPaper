@@ -4,16 +4,18 @@ Created on  2018-11-08 15:13:35
 @author: quantaolin
 '''
 import numpy as np
-import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 from pymongo import MongoClient
+import datetime
 
 conn = MongoClient('127.0.0.1', 27017)
 db = conn.mydb
 sb_set = db.sb_set
+test_sb_set = db.test_sb_set
 test_result_set = db.test_result_set
 
-
+dataDict={}
 priceDict={}
 for i in sb_set.find():
     code = i['code']
@@ -22,10 +24,12 @@ for i in sb_set.find():
         print("code:",code," is not have continue")
         continue   
     tmp_set = db[code]
-    pricederivatelist = []
+    datalist = []
     pricelist = [] 
     for j in tmp_set.find().sort("data"):
-        pricelist.append(j['close'])       
+        datalist.append(j['data'])
+        pricelist.append(j['close'])
+    dataDict[code]=datalist    
     priceDict[code]=pricelist
 
 riseDict={}
@@ -33,6 +37,7 @@ fallDict={}
 
 for i in test_result_set.find():
     code = i['code']
+    print(code)
     riseAndFallFlag = i['riseAndFallFlag']
     index = i['index']
     useDict = fallDict
@@ -43,19 +48,30 @@ for i in test_result_set.find():
     else:
         useDict[code] = [index]
 
-for key,value in priceDict.items():
+for i in test_sb_set.find():
+    code = i['code']
+    data = dataDict[code]
+    value = priceDict[code]
+    fmt = mdates.DateFormatter('%Y-%m-%d')
+    timeArray = [datetime.datetime.strptime(i, '%Y-%m-%d') for i in data]
+    a = np.array(timeArray)
     b = np.array(value)
-    plt.plot(b)
+    fig, ax = plt.subplots()
+    plt.plot(a,b,'o-')
+    ax.xaxis.set_major_formatter(fmt)
     plt.grid(True) ##增加格点
     plt.axis('tight')
-    riseList = riseDict[key]
-    for i in riseList:
-        plt.annotate('上涨检测点：'+i+","+value[i], xy=(i, value[i]), xytext=(i+2, value[i]+2),
-            arrowprops=dict(facecolor='black', shrink=0.05),
+    plt.title(i['code'][0:6])
+    if code in riseDict:
+        riseList = riseDict[code]
+        for i in riseList:
+            plt.annotate("⬆️", xy=(timeArray[i], value[i]), xytext=(-4, 3),
+            textcoords='offset points'
             )
-    fallList = fallDict[key]
-    for i in fallList:
-        plt.annotate('下跌检测点：'+i+","+value[i], xy=(i, value[i]), xytext=(i+2, value[i]+2),
-            arrowprops=dict(facecolor='black', shrink=0.05),
+    if code in fallDict:
+        fallList = fallDict[code]
+        for i in fallList:
+            plt.annotate("⬇️", xy=(timeArray[i], value[i]), xytext=(-4, 3),
+            textcoords='offset points'
             )
     plt.show()       

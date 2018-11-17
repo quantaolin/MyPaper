@@ -38,6 +38,7 @@ for i in merge_rise_feature_set.find():
         plt.plot(b)
         plt.grid(True) ##增加格点
         plt.axis('tight')
+        plt.title('rise')
         plt.show()
         
 for i in merge_fall_feature_set.find():
@@ -50,4 +51,5 @@ for i in merge_fall_feature_set.find():
         plt.plot(b)
         plt.grid(True) ##增加格点
         plt.axis('tight')
+        plt.title('fall')
         plt.show()

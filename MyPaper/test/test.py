@@ -27,7 +27,7 @@ conn = MongoClient('127.0.0.1', 27017)
 db = conn.mydb
 sb_set = db.test_sb_set
 test_result_set = db.test_result_set
-all_sb_set = db.shsz_sb_set
+all_sb_set = db.sb_set
 rise_feature_set = db.merge_rise_feature_set
 fall_feature_set = db.merge_fall_feature_set
 

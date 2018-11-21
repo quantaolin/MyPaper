@@ -91,7 +91,7 @@ for i in merge_fall_feature_set.find():
             testcode=j['code']
             testPriceSeq = pricederivatDict[testcode]
             re = falltestset.find_one({"code":testcode})
-            count = getMatchCount(featurePriceSeq,testPriceSeq,RISE_DTW_DISTANCE_THRESHOLD)
+            count = getMatchCount(featurePriceSeq,testPriceSeq,FALL_DTW_DISTANCE_THRESHOLD)
             if re is not None:
                 right += count
             else:

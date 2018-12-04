@@ -1,6 +1,1 @@
-TS=(stock AND market AND forecast) AND SU = computer science
-TS=(stock AND market AND forecast AND Bayesian) AND SU = computer science
-TS=(stock AND market AND forecast AND fuzzy ) AND SU = computer science
-TS=(stock AND market AND forecast AND wavelet ) AND SU = computer science
-TS=(stock AND market AND forecast AND HMM) AND SU = computer science
-TS=(stock AND market AND forecast AND Markov) AND SU = computer science
+20181204 334 1178 3456 70
